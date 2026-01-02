@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --color-background: #0b1021;
+  --color-foreground: #e5e7eb;
+  --color-muted: #9ca3af;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-card: rgba(255, 255, 255, 0.03);
+  --color-accent: #38bdf8;
+  --color-accent-foreground: #0b1021;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark {
+  color-scheme: dark;
+  --color-background: #050814;
+  --color-foreground: #e5e7eb;
+  --color-muted: #94a3b8;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-card: rgba(255, 255, 255, 0.03);
+  --color-accent: #38bdf8;
+  --color-accent-foreground: #041014;
+}
+
+.light {
+  color-scheme: light;
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-muted: #475569;
+  --color-border: rgba(15, 23, 42, 0.08);
+  --color-card: #ffffff;
+  --color-accent: #0ea5e9;
+  --color-accent-foreground: #f8fafc;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased min-h-screen;
+    background-image: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.08), transparent 25%),
+      radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.08), transparent 35%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  }
+
+  a {
+    @apply text-accent transition-colors duration-200;
+  }
+
+  ::selection {
+    background: rgba(56, 189, 248, 0.2);
+    color: var(--color-foreground);
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card backdrop-blur border border-border rounded-2xl shadow-soft;
+  }
+
+  .prose-mild {
+    @apply text-base leading-relaxed text-foreground;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.6);
+}
