@@ -1,13 +1,193 @@
-# Learning log: shipping weekly
+import { useState, useEffect } from 'react'
 
-I set a small rule for 2025: ship one thing every week. It could be a UI refactor, a new API integration, or a short MDX post like this one.
+export const codeInstall = `npm install three`
+export const codeCdn = `<script src="https://unpkg.com/three@latest/build/three.min.js"></script>`
+export const codeScene = `import * as THREE from 'three'
 
-## Guardrails
+const scene = new THREE.Scene()`
+export const codeCamera = `const camera = new THREE.PerspectiveCamera(
+	75, // field of view
+	window.innerWidth / window.innerHeight, // aspect ratio
+	0.1, // near plane
+	1000 // far plane
+)
 
-- A scoped checklist before the week starts
-- A visible demo link on Friday
-- A tiny retro in public, even when it flops
+camera.position.z = 5`
+export const codeRenderer = `const renderer = new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth, window.innerHeight)
 
-## Wins so far
+document.body.appendChild(renderer.domElement)`
+export const codeAmbient = `const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+scene.add(ambientLight)`
+export const codeDirectional = `const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+directionalLight.position.set(5, 5, 5)
+scene.add(directionalLight)`
+export const codeGeometry = `const geometry = new THREE.BoxGeometry(1, 1, 1)`
+export const codeMaterial = `const material = new THREE.MeshStandardMaterial({
+	color: 0x00ff00,
+})`
+export const codeMesh = `const cube = new THREE.Mesh(geometry, material)
+scene.add(cube)`
+export const codeAnimate = `function animate() {
+	requestAnimationFrame(animate)
 
-The cadence keeps momentum high and makes context switching painless. My React muscle memory is sharper, and design decisions are easier because I have a backlog of patterns that already shipped.
+	cube.rotation.x += 0.01
+	cube.rotation.y += 0.01
+
+	renderer.render(scene, camera)
+}
+
+animate()`
+
+export function highlightCode(code) {
+	const escaped = code
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+
+	return escaped
+		.replace(/\b(import|from|const|function|return|new)\b/g, '<span class="text-[#c792ea]">$1</span>')
+		.replace(/\b(THREE)\b/g, '<span class="text-[#ecc48d]">$1</span>')
+		.replace(/\b(scene|camera|renderer|cube|animate|requestAnimationFrame)\b/g, '<span class="text-[#82aaff]">$1</span>')
+		.replace(/\b([0-9]+(?:\.[0-9]+)?)\b/g, '<span class="text-[#f78c6c]">$1</span>')
+		.replace(/('three')/g, '<span class="text-[#c3e88d]">$1</span>')
+}
+
+export function CodeBlock({ code, title }) {
+	const [copied, setCopied] = useState(false)
+
+	useEffect(() => {
+		if (!copied) return
+		const id = setTimeout(() => setCopied(false), 1200)
+		return () => clearTimeout(id)
+	}, [copied])
+
+	const handleCopy = () => {
+		if (typeof navigator !== 'undefined' && navigator.clipboard) {
+			navigator.clipboard.writeText(code)
+			setCopied(true)
+		}
+	}
+
+	return (
+		<div className="relative overflow-hidden rounded-xl border border-border/60 bg-[#0f1116] shadow-lg shadow-accent/15">
+			{title ? (
+				<div className="flex items-center justify-between border-b border-border/60 bg-[#12141b] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#9ba6b2]">
+					<span>{title}</span>
+					<button
+						onClick={handleCopy}
+						className="rounded-md border border-border/60 px-2 py-1 text-[11px] font-semibold text-accent transition hover:border-accent hover:bg-accent/10"
+						type="button"
+					>
+						{copied ? 'Copied' : 'Copy'}
+					</button>
+				</div>
+			) : (
+				<button
+					onClick={handleCopy}
+					className="absolute right-3 top-3 rounded-md border border-border/60 px-2 py-1 text-[11px] font-semibold text-accent transition hover:border-accent hover:bg-accent/10"
+					type="button"
+				>
+					{copied ? 'Copied' : 'Copy'}
+				</button>
+			)}
+			<pre className="overflow-x-auto px-4 py-4 text-sm leading-relaxed text-[#e8e8e8]">
+				<code dangerouslySetInnerHTML={{ __html: highlightCode(code) }} />
+			</pre>
+		</div>
+	)
+}
+
+
+<div className="space-y-8">
+
+	<section className="space-y-3">
+		<div className="flex flex-wrap gap-3">
+			<a
+				href="https://threejsbasics.hashnode.dev/threejs-basics-scene-camera-lights-mesh-and-materials-beginner-guide"
+				className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-semibold text-accent hover:border-accent hover:bg-accent/10"
+				target="_blank"
+				rel="noreferrer"
+			>
+				Read this on Hashnode
+			</a>
+		</div>
+
+		<p>
+			If you want to build 3D experiences on the web, Three.js is one of the best libraries to start with. It wraps WebGL so you can focus on scenes, cameras, lights, and meshes instead of low-level graphics code.
+		</p>
+		<p>
+			In this post we will cover the core building blocks of Three.js: Scene, Camera, Renderer, Lights, Geometry, Material, and Mesh. We will finish with a simple animated cube.
+		</p>
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>What is Three.js?</b></h2>
+		<p>Three.js is a JavaScript library for creating 3D objects, animations, and interactive scenes directly in the browser.</p>
+		<p className="font-semibold">Install:</p>
+		<CodeBlock code={codeInstall} title="Install" />
+		<p className="font-semibold">Or via CDN:</p>
+		<CodeBlock code={codeCdn} title="CDN" />
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>1. Scene — the container</b></h2>
+		<p>A Scene is the stage that holds all 3D objects, lights, and cameras. If you do not add something to the scene, it will not render.</p>
+		<CodeBlock code={codeScene} title="Scene" />
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>2. Camera — how we see</b></h2>
+		<p>The camera defines what part of the scene is visible. The most common choice is <code>PerspectiveCamera</code>, which mimics human vision.</p>
+		<CodeBlock code={codeCamera} title="Camera" />
+		<p>If the camera is not positioned properly, you will not see anything.</p>
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>3. Renderer — drawing to the screen</b></h2>
+		<p>The renderer takes the scene and camera and paints them to a canvas.</p>
+		<CodeBlock code={codeRenderer} title="Renderer" />
+	</section>
+
+	<section className="space-y-4">
+		<h2><b>4. Lights — making objects visible</b></h2>
+		<p>Without light, objects will appear black. Two quick options:</p>
+		<div className="space-y-3">
+			<p className="font-semibold">Ambient light (soft, global):</p>
+			<CodeBlock code={codeAmbient} title="Ambient light" />
+			<p className="font-semibold">Directional light (sun-like, casts shadows):</p>
+			<CodeBlock code={codeDirectional} title="Directional light" />
+		</div>
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>5. Geometry — shape</b></h2>
+		<p>Geometry defines the shape of an object. Example: a box (cube).</p>
+		<CodeBlock code={codeGeometry} title="Geometry" />
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>6. Material — appearance</b></h2>
+		<p>Material controls color, texture, and how light interacts with the surface.</p>
+		<CodeBlock code={codeMaterial} title="Material" />
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>7. Mesh — geometry + material</b></h2>
+		<p>A Mesh combines geometry and material into a visible object.</p>
+		<CodeBlock code={codeMesh} title="Mesh" />
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>8. Render loop — animate</b></h2>
+		<p>Render the scene and add simple rotation to prove it is working.</p>
+		<CodeBlock code={codeAnimate} title="Animate" />
+		<p>You now have a rotating 3D cube.</p>
+	</section>
+
+	<section className="space-y-3">
+		<h2><b>Final thoughts</b></h2>
+		<p>These are the fundamentals of Three.js: Scene (container), Camera (view), Renderer (draw), Lights (visibility), Geometry (shape), Material (appearance), Mesh (visible object), and an animation loop to bring it to life.</p>
+	</section>
+
+</div>

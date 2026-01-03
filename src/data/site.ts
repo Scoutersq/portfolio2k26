@@ -7,4 +7,5 @@ export const siteConfig = {
   location: 'Remote / India',
   ctaPrimary: '/projects',
   ctaSecondary: '/blogs',
+  contactEmail: 'adityarajp1208@gmail.com',
 }
