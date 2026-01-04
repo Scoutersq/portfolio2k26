@@ -16,9 +16,10 @@ type ButtonProps = {
   className?: string
   children: React.ReactNode
   target?: string
+  type?: 'button' | 'submit' | 'reset'
 }
 
-export function Button({ href, variant = 'primary', className, children, target }: ButtonProps) {
+export function Button({ href, variant = 'primary', className, children, target, type = 'button' }: ButtonProps) {
   const classes = cn(baseClasses, variants[variant], className)
 
   if (href) {
@@ -37,5 +38,9 @@ export function Button({ href, variant = 'primary', className, children, target 
     )
   }
 
-  return <button className={classes}>{children}</button>
+  return (
+    <button type={type} className={classes}>
+      {children}
+    </button>
+  )
 }
