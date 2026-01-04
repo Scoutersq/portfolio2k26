@@ -1,2 +1,0 @@
-// Snippets page removed
-export {}

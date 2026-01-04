@@ -1,2 +1,0 @@
-// Snippets data removed
-export {}

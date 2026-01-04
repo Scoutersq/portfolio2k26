@@ -1,2 +1,0 @@
-// Snippet card removed
-export {}
