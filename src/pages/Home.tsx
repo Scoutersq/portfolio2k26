@@ -1,15 +1,13 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Github, Linkedin } from 'lucide-react'
 import avatarImg from '../assets/avatar.jpeg'
-import { useMemo } from 'react'
+import { useMemo, useRef, useState, useLayoutEffect } from 'react'
 import { Button } from '../components/ui/Button'
 import { SectionHeader } from '../components/ui/SectionHeader'
 import { ProjectCard } from '../components/cards/ProjectCard'
 import { BlogCard } from '../components/cards/BlogCard'
-import { SnippetCard } from '../components/cards/SnippetCard'
 import { projects } from '../data/projects'
 import { blogs } from '../data/blogs'
-import { snippets } from '../data/snippets'
 import { siteConfig } from '../data/site'
 
 export default function HomePage() {
@@ -61,25 +59,6 @@ export default function HomePage() {
       </section>
 
       <section>
-        <SectionHeader
-          eyebrow="Snippets"
-          title="Reusable bits"
-          description="Tiny helpers I drop into new projects: hooks, utilities, and styling tokens."
-        />
-        <div className="grid gap-4 md:grid-cols-2">
-          {snippets.slice(0, 2).map((snippet, index) => (
-            <SnippetCard key={snippet.slug} snippet={snippet} index={index} />
-          ))}
-        </div>
-        <div className="mt-6">
-          <Button variant="ghost" href="/snippets" className="gap-2">
-            Explore snippets
-            <ArrowRight size={16} />
-          </Button>
-        </div>
-      </section>
-
-      <section>
         <div className="glass-card flex flex-col gap-6 rounded-2xl p-6 shadow-lg shadow-accent/10 md:p-8">
           <div className="flex flex-col gap-2">
             <h2 className="text-xl font-semibold md:text-2xl">Have a project in mind? I’d love to discuss how I can help.</h2>
@@ -118,6 +97,8 @@ export default function HomePage() {
 }
 
 function HeroSection() {
+  const [avatarLoaded, setAvatarLoaded] = useState(false)
+
   return (
     <section className="glass-card relative overflow-hidden p-6 md:p-8">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.12),transparent_25%),radial-gradient(circle_at_80%_0%,rgba(56,189,248,0.12),transparent_35%)]" />
@@ -137,9 +118,7 @@ function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.05 }}
           >
-            <h1 className="text-3xl font-semibold leading-tight md:text-4xl">
-              {siteConfig.name}
-            </h1>
+            <NameOrbit>{siteConfig.name}</NameOrbit>
             <p className="text-lg text-muted md:max-w-2xl">
               <span className="font-semibold">{siteConfig.tagline}</span> — {siteConfig.intro}
             </p>
@@ -148,7 +127,7 @@ function HeroSection() {
             className="flex flex-wrap items-center gap-3"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
+            transition={{ duration: 0.2, delay: 0.1 }}
           >
             <Button href={siteConfig.ctaPrimary} className="gap-2">
               View projects
@@ -201,11 +180,67 @@ function HeroSection() {
           <img
             src={avatarImg}
             alt="Aditya Raj Prasad portrait"
-            className="h-full w-full object-cover object-[50%_22%]"
+            className={`h-full w-full object-cover object-[50%_22%] transition duration-500 ${avatarLoaded ? 'blur-0' : 'blur-sm'}`}
             loading="lazy"
+            onLoad={() => setAvatarLoaded(true)}
           />
         </motion.div>
       </div>
     </section>
+  )
+}
+
+function NameOrbit({ children }: { children: React.ReactNode }) {
+  const textRef = useRef<HTMLHeadingElement | null>(null)
+  const [box, setBox] = useState({ width: 0, height: 0 })
+
+  useLayoutEffect(() => {
+    const el = textRef.current
+    if (!el) return
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setBox({ width, height })
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  const paddingX = 14
+  const paddingY = 10
+  const boxWidth = box.width ? box.width + paddingX * 2 : undefined
+  const boxHeight = box.height ? box.height + paddingY * 2 : undefined
+
+  return (
+    <div className="relative inline-flex w-fit items-center px-1 py-1">
+      {boxWidth && boxHeight ? (
+        <motion.svg
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          width={boxWidth}
+          height={boxHeight}
+          viewBox={`0 0 ${boxWidth} ${boxHeight}`}
+          fill="none"
+          aria-hidden="true"
+        >
+          <motion.rect
+            x={3}
+            y={3}
+            width={boxWidth - 6}
+            height={boxHeight - 6}
+            rx={14}
+            stroke="#38bdf8"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray="120 480"
+            initial={{ strokeDashoffset: 0, opacity: 0.8 }}
+            animate={{ strokeDashoffset: -600, opacity: 0.4 }}
+            transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
+          />
+        </motion.svg>
+      ) : null}
+      <h1 ref={textRef} className="relative z-10 text-3xl font-semibold leading-tight md:text-4xl">
+        {children}
+      </h1>
+    </div>
   )
 }
