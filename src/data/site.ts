@@ -3,7 +3,7 @@ export const siteConfig = {
   role: 'Web Developer',
   tagline: 'Building & Learning in Public',
   intro:
-    'I’m a web developer focused on building clean, scalable applications with React and TypeScript, and leveraging Generative AI to create smarter user experiences.',
+    'I build modern web applications with a strong focus on performance, scalability, and clean design, and I explore Generative AI to enhance user experiences and product intelligence.',
   location: 'Remote / India',
   ctaPrimary: '/projects',
   ctaSecondary: '/blogs',
