@@ -5,7 +5,6 @@ import HomePage from './pages/Home'
 import ProjectsPage from './pages/Projects'
 import BlogsPage from './pages/Blogs'
 import BlogDetailPage from './pages/BlogDetail'
-import SnippetsPage from './pages/Snippets'
 import AboutPage from './pages/About'
 
 function AppRoutes() {
@@ -44,14 +43,6 @@ function AppRoutes() {
             element={
               <PageTransition>
                 <BlogDetailPage />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/snippets"
-            element={
-              <PageTransition>
-                <SnippetsPage />
               </PageTransition>
             }
           />
