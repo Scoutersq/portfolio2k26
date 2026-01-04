@@ -266,6 +266,13 @@ function NameOrbit({ children }: { children: React.ReactNode }) {
   const paddingY = 10
   const boxWidth = box.width ? box.width + paddingX * 2 : undefined
   const boxHeight = box.height ? box.height + paddingY * 2 : undefined
+  const rectWidth = boxWidth ? boxWidth - 6 : 0
+  const rectHeight = boxHeight ? boxHeight - 6 : 0
+  const perimeter = rectWidth && rectHeight ? 2 * (rectWidth + rectHeight) : 0
+  // Single moving dash with a visible gap
+  const dashLength = perimeter ? perimeter * 0.55 : 0
+  const gapLength = perimeter && dashLength ? Math.max(perimeter - dashLength, 8) : 0
+  const loopDistance = dashLength + gapLength
 
   return (
     <div className="relative inline-flex w-fit items-center px-1 py-1">
@@ -288,10 +295,10 @@ function NameOrbit({ children }: { children: React.ReactNode }) {
             strokeWidth={1.5}
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeDasharray="120 480"
-            initial={{ strokeDashoffset: 0, opacity: 0.8 }}
-            animate={{ strokeDashoffset: -600, opacity: 0.4 }}
-            transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
+            strokeDasharray={`${dashLength} ${gapLength}`}
+            initial={{ strokeDashoffset: -(gapLength / 2), opacity: 0.7 }}
+            animate={{ strokeDashoffset: -(gapLength / 2) - loopDistance, opacity: 0.35 }}
+            transition={{ duration: 5, ease: 'linear', repeat: Infinity, repeatType: 'loop' }}
           />
         </motion.svg>
       ) : null}

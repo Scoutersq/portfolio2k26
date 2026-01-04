@@ -25,7 +25,7 @@ export function Navbar() {
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 border-b border-border bg-background/70 px-4 py-3">
         <NavLink to="/" className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em]">
           <motion.span initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}>
-            aditya.dev 
+            aditya raj
           </motion.span>
         </NavLink>
         <div className="flex items-center gap-2">
